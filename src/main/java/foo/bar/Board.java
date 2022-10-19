@@ -1,14 +1,26 @@
 package foo.bar;
 
+import foo.bar.exception.BusyTeamException;
 import foo.bar.model.Match;
 import foo.bar.model.Score;
 import foo.bar.model.Summary;
+import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Represents the score board for the world cup.
  * It offers some CRUD-like operations for the games.
  */
+@Getter
 public class Board {
+
+    private final Map<Match, Score> games = new HashMap<>();
+
+    private final Set<String> playingTeams = new HashSet<>();
 
     /**
      * Starts a game between homeTeam and awayTeam with and initial score of 0 - 0.
@@ -17,8 +29,16 @@ public class Board {
      * @return a Match representing the game just started.
      */
     public Match startGame(String homeTeam, String awayTeam) {
-        //TODO: implement
-        return null;
+        Match match = new Match(homeTeam, awayTeam);
+        if (playingTeams.contains(homeTeam) || playingTeams.contains(awayTeam)) {
+            throw new BusyTeamException(
+                    String.format("Cannot start a game between %s and %s. At least one of the teams is already playing.", homeTeam, awayTeam));
+        } else {
+            playingTeams.add(homeTeam);
+            playingTeams.add(awayTeam);
+            games.put(match, new Score(0, 0));
+        }
+        return match;
     }
 
     /**
