@@ -1,15 +1,24 @@
 package foo.bar.model;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-@AllArgsConstructor
+import java.time.LocalDateTime;
+
 @Getter
 @EqualsAndHashCode
 public class Match {
 
-    private String homeTeam;
+    private final String homeTeam;
 
-    private String awayTeam;
+    private final String awayTeam;
+
+    @EqualsAndHashCode.Exclude
+    private final LocalDateTime startTime;
+
+    public Match(String homeTeam, String awayTeam) {
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        startTime = LocalDateTime.now();
+    }
 }
