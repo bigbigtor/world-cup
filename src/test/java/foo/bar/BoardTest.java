@@ -36,8 +36,10 @@ class BoardTest {
 
     @Test
     void startGameFailsIfATeamIsBusy() {
-        assertThrows(BusyTeamException.class, () -> board.startGame(TEAM_1, TEAM_2), "Cannot start a game between team1 and team2. At least one of the teams is already playing.");
-        assertThrows(BusyTeamException.class, () -> board.startGame(TEAM_1, TEAM_5), "Cannot start a game between team1 and team5. At least one of the teams is already playing.");
+        Exception e = assertThrows(BusyTeamException.class, () -> board.startGame(TEAM_1, TEAM_2));
+        assertEquals("Cannot start a game between team1 and team2. At least one of the teams is already playing.", e.getMessage());
+        e = assertThrows(BusyTeamException.class, () -> board.startGame(TEAM_1, TEAM_5));
+        assertEquals("Cannot start a game between team1 and team5. At least one of the teams is already playing.", e.getMessage());
     }
 
     @Test
@@ -53,8 +55,10 @@ class BoardTest {
     void finishGameFailsIfMatchIsNotFound() {
         Match match56 = new Match(TEAM_5, TEAM_6);
         Match match15 = new Match(TEAM_1, TEAM_5);
-        assertThrows(MatchNotFoundException.class, () -> board.finishGame(match56), "Cannot finish a game for team5 and team6. There is no ongoing game between them.");
-        assertThrows(MatchNotFoundException.class, () -> board.finishGame(match15), "Cannot finish a game for team1 and team5. There is no ongoing game between them.");
+        Exception e = assertThrows(MatchNotFoundException.class, () -> board.finishGame(match56));
+        assertEquals("Cannot finish a game for team5 and team6. There is no ongoing game between them.", e.getMessage());
+        e = assertThrows(MatchNotFoundException.class, () -> board.finishGame(match15));
+        assertEquals("Cannot finish a game for team1 and team5. There is no ongoing game between them.", e.getMessage());
     }
 
     @Test
@@ -67,8 +71,24 @@ class BoardTest {
     }
 
     @Test
-    void updateScore() {
-        fail();
+    void updateScoreFailsIfMatchIsNotFound() {
+        Match match56 = new Match(TEAM_5, TEAM_6);
+        Match match15 = new Match(TEAM_1, TEAM_5);
+        Score score1 = new Score(10, 5);
+        Score score2 = new Score(4, 7);
+        Exception e = assertThrows(MatchNotFoundException.class, () -> board.updateScore(match56, score1));
+        assertEquals("Cannot update the score for team5 and team6. There is no ongoing game between them.", e.getMessage());
+        e = assertThrows(MatchNotFoundException.class, () -> board.updateScore(match15, score2));
+        assertEquals("Cannot update the score for team1 and team5. There is no ongoing game between them.", e.getMessage());
+    }
+
+    @Test
+    void updateScoreWorks() {
+        Match match = new Match(TEAM_3, TEAM_4);
+        Score score = new Score(4, 9);
+        board.updateScore(match, score);
+        assertEquals(score.getHomeTeamScore(), board.getGames().get(match).getHomeTeamScore());
+        assertEquals(score.getAwayTeamScore(), board.getGames().get(match).getAwayTeamScore());
     }
 
     @Test

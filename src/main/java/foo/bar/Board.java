@@ -63,7 +63,12 @@ public class Board {
      * @param score the new score.
      */
     public void updateScore(Match match, Score score) {
-        //TODO: implement
+        if (games.containsKey(match)) {
+            games.replace(match, score);
+        } else {
+            throw new MatchNotFoundException(
+                    String.format("Cannot update the score for %s and %s. There is no ongoing game between them.", match.getHomeTeam(), match.getAwayTeam()));
+        }
     }
 
     /**

@@ -1,7 +1,7 @@
 package foo.bar.exception;
 
 /*
- * Represents the error of trying to delete a non-existing match.
+ * Represents the error of trying to operate a non-existing match.
  */
 public class MatchNotFoundException extends RuntimeException{
 
