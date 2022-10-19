@@ -1,6 +1,7 @@
 package foo.bar;
 
 import foo.bar.exception.BusyTeamException;
+import foo.bar.exception.MatchNotFoundException;
 import foo.bar.model.Match;
 import foo.bar.model.Score;
 import foo.bar.model.Summary;
@@ -46,7 +47,14 @@ public class Board {
      * @param match the match that will finish.
      */
     public void finishGame(Match match) {
-        //TODO: implement
+        if (games.containsKey(match)) {
+            games.remove(match);
+            playingTeams.remove(match.getHomeTeam());
+            playingTeams.remove(match.getAwayTeam());
+        } else {
+            throw new MatchNotFoundException(
+                    String.format("Cannot finish a game for %s and %s. There is no ongoing game between them.", match.getHomeTeam(), match.getAwayTeam()));
+        }
     }
 
     /**

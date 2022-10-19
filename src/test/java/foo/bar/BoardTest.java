@@ -1,12 +1,14 @@
 package foo.bar;
 
 import foo.bar.exception.BusyTeamException;
+import foo.bar.exception.MatchNotFoundException;
 import foo.bar.model.Match;
 import foo.bar.model.Score;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -48,8 +50,20 @@ class BoardTest {
     }
 
     @Test
-    void finishGame() {
-        fail();
+    void finishGameFailsIfMatchIsNotFound() {
+        Match match56 = new Match(TEAM_5, TEAM_6);
+        Match match15 = new Match(TEAM_1, TEAM_5);
+        assertThrows(MatchNotFoundException.class, () -> board.finishGame(match56), "Cannot finish a game for team5 and team6. There is no ongoing game between them.");
+        assertThrows(MatchNotFoundException.class, () -> board.finishGame(match15), "Cannot finish a game for team1 and team5. There is no ongoing game between them.");
+    }
+
+    @Test
+    void finishGameWorks() {
+        Match match = new Match(TEAM_3, TEAM_4);
+        board.finishGame(match);
+        assertFalse(board.getGames().containsKey(match));
+        assertFalse(board.getPlayingTeams().contains(TEAM_3));
+        assertFalse(board.getPlayingTeams().contains(TEAM_4));
     }
 
     @Test
