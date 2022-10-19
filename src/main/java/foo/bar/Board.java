@@ -1,7 +1,9 @@
 package foo.bar;
 
+import foo.bar.comparator.GameComparator;
 import foo.bar.exception.BusyTeamException;
 import foo.bar.exception.MatchNotFoundException;
+import foo.bar.model.Game;
 import foo.bar.model.Match;
 import foo.bar.model.Score;
 import foo.bar.model.Summary;
@@ -9,8 +11,10 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Represents the score board for the world cup.
@@ -22,6 +26,8 @@ public class Board {
     private final Map<Match, Score> games = new HashMap<>();
 
     private final Set<String> playingTeams = new HashSet<>();
+
+    private final GameComparator gameComparator = new GameComparator();
 
     /**
      * Starts a game between homeTeam and awayTeam with and initial score of 0 - 0.
@@ -76,7 +82,11 @@ public class Board {
      * @return the games' summary
      */
     public Summary getSummary() {
-        //TODO: implement
-        return null;
+        List<Game> gameList = games.entrySet()
+                .stream()
+                .map(entry -> new Game(entry.getKey(), entry.getValue()))
+                .sorted(gameComparator)
+                .collect(Collectors.toList());
+        return new Summary(gameList);
     }
 }
